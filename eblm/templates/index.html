@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% set title = 'EBLM Project' -%}
+{% block main %}
+<legend class='text-center'> EBLM Project </legend>
+{% include "navbar.html" %}
+<div class='row'>
+    <div id='eblm_plot' class='image_bkg'></div>
+</div>
+<div class='row'>
+    <div id='main' class='col-xs-12'>
+        <table id='eblm_params' class='table'>
+            <thead>
+                <tr>
+                    <th>SWASP ID</th>
+                    <th class='hidden-md'>Epoch<br/></th>
+                    <th>Period<br/>(days)</th>
+                    <th>V<br/>(mag)</th>
+                    <th>Spec<br/>Type</th>
+                    <th>K<br/>(km/s)</th>
+                    <th class='hidden-md'>FWHM<br/>(km/s)</th>
+                    <th>N<sub>GAIA</sub><br/></th>
+                    <th>R<sub>star</sub><br/>(R<sub>Sun</sub>)</th>
+                    <th>Giant?<br/></th>
+                    <th>Current Status</th>
+                    <th class='hidden-md'>Last<br/>Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in eblms %}
+                    <tr class='clickable-row'>
+                        <td>{{ row.swasp_id }}</td>
+                        <td class='hidden-md'>{{ row.epoch }}</td>
+                        <td>{{ row.period }}</td>
+                        <td>{{ row.Vmag }}</td>
+                        <td>{{ row.paramfit_spec_type }}</td>
+                        <td>{{ row.semi_amplitude }}</td>
+                        <td class='hidden-md'>{{ row.ccf_fwhm_avg }}</td>
+                        <td>{{ row.n_gaia_matches }}</td>
+                        <td>{{ row.r_star }}</td>
+                        <td>{{ row.giant_flag }}</td>
+                        <td>{{ row.current_status }}</td>
+                        <td class='hidden-md'>{{ row.last_update }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function make_searchable(table, col_name) {
+    table.column(col_name+':name').each(function() {
+        var column=this;
+        item=$('<br/><input type=text size=10 placeholder="Search" style="width: 100%">').appendTo($(column.header()));
+        item.on('keyup change', function () {
+            if(column.search()!==this.value) {
+                column.search(this.value).draw();
+            }
+        });
+        item.on('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+}
+
+$(document).ready(function(){
+    // activate current page in navbar
+    $('#home_page').addClass('active');
+
+    // make columns sortable and some searchable
+    var table = $('#eblm_params').DataTable({
+        paging: false,
+        info: false,
+        fixedHeader: true,
+        dom: "t",
+        columns: [
+            {"name": "SWASP ID"},
+            {"name": "Epoch"},
+            {"name": "Period"},
+            {"name": "Vmag"},
+            {"name": "Spec Type"},
+            {"name": "Semi Amplitude"},
+            {"name": "CCF FWHM"},
+            {"name": "N Gaia Matches"},
+            {"name": "Rstar"},
+            {"name": "Giant?"},
+            {"name": "Current Status"},
+            {"name": "Last Update"},
+        ]
+    });
+    make_searchable(table, "SWASP ID");
+    make_searchable(table, "Current Status");
+
+    // detect row clicks, highlight and display plots etc
+    $('#eblm_params tbody').on( 'click', '.clickable-row', function () {
+        if ( $(this).hasClass('active') ) {
+            $(this).removeClass('active');
+        }
+        else {
+            $(this).addClass('active').siblings().removeClass('active');
+        }
+        var swasp_id = $(this).find("td:nth-child(1)").text();
+        var date = new Date().getTime();
+        var url = "{{ url_for('static', filename='pngs') }}" + "/" + swasp_id + ".png?q=" + date;
+        $("#eblm_plot").css('background-image', "url(\'" + url + "\')" );
+
+        // do the plotting here
+        console.log(swasp_id);
+        console.log(date);
+        console.log(url);
+    } );
+
+});
+</script>
+{% endblock %}

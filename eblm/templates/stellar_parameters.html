@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% set title = 'Stellar Parameters' -%}
+{% block main %}
+<legend class='text-center'> Dwarf Star Parameters </legend>
+{% include "navbar.html" %}
+<div class='row'>
+    <div id='main' class='col-xs-12'>
+        <table id='stellar_params' class='table'>
+            <thead>
+                <tr>
+                    <th>SpT</th>
+                    <th>T<sub>eff</sub></th>
+                    <th>log(T)</th>
+                    <th>BC<sub>V</sub></th>
+                    <th>M<sub>V</sub></th>
+                    <th>log(L)</th>
+                    <th>B-V</th>
+                    <th>B<sub>t</sub>-V<sub>t</sub></th>
+                    <th>U-B</th>
+                    <th>V-R<sub>C</sub></th>
+                    <th>V-I<sub>C</sub></th>
+                    <th>V-K<sub>S</sub></th>
+                    <th>J-H</th>
+                    <th>H-K</th>
+                    <th>K<sub>S</sub>-W<sub>1</sub></th>
+                    <th>M<sub>Sun</sub></th>
+                    <th>log(Age)</th>
+                    <th>b-y</th>
+                    <th>M<sub>J</sub></th>
+                    <th>M<sub>K<sub>s</sub></sub></th>
+                    <th>M<sub>Bol</sub></th>
+                    <th>i-z</th>
+                    <th>z-Y</th>
+                    <th>W<sub>1</sub>-W<sub>2</sub></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in params %}
+                    <tr class='clickable-row'>
+                        <td>{{ row.SpT }}</td>
+                        <td>{{ row.Teff }}</td>
+                        <td>{{ row.logT }}</td>
+                        <td>{{ row.BCv }}</td>
+                        <td>{{ row.Mv }}</td>
+                        <td>{{ row.logL }}</td>
+                        <td>{{ row.B__V }}</td>
+                        <td>{{ row.Bt__Vt }}</td>
+                        <td>{{ row.U__B }}</td>
+                        <td>{{ row.V__Rc }}</td>
+                        <td>{{ row.V__Ic }}</td>
+                        <td>{{ row.V__Ks }}</td>
+                        <td>{{ row.J__H }}</td>
+                        <td>{{ row.H__K }}</td>
+                        <td>{{ row.Ks__W1 }}</td>
+                        <td>{{ row.Msun }}</td>
+                        <td>{{ row.logAge }}</td>
+                        <td>{{ row.b__y }}</td>
+                        <td>{{ row.M_J }}</td>
+                        <td>{{ row.M_Ks }}</td>
+                        <td>{{ row.Mbol }}</td>
+                        <td>{{ row.i__z }}</td>
+                        <td>{{ row.z__Y }}</td>
+                        <td>{{ row.W1__W2 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+function make_searchable(table, col_name) {
+    table.column(col_name+':name').each(function() {
+        var column=this;
+        item=$('<br/><input type=text size=5 placeholder="Search" style="width: 100%">').appendTo($(column.header()));
+        item.on('keyup change', function () {
+            if(column.search()!==this.value) {
+                column.search(this.value).draw();
+            }
+        });
+        item.on('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+}
+
+$(document).ready(function(){
+    // activate current page in navbar
+    $('#stellar_params_page').addClass('active');
+
+    // make columns sortable and some searchable
+    var table = $('#stellar_params').DataTable({
+        paging: false,
+        info: false,
+        fixedHeader: true,
+        dom: "t",
+        columns: [
+            {"name": "Spec Type"},
+            {"name": "Teff"},
+            {"name": "log(T)"},
+            {"name": "BCv"},
+            {"name": "Mv"},
+            {"name": "log(L)"},
+            {"name": "B-V"},
+            {"name": "Bt-Vt"},
+            {"name": "U-B"},
+            {"name": "V-Rc"},
+            {"name": "V-Ic"},
+            {"name": "V-Ks"},
+            {"name": "J-H"},
+            {"name": "H-K"},
+            {"name": "Ks-W1"},
+            {"name": "Msun"},
+            {"name": "log(Age)"},
+            {"name": "b-y"},
+            {"name": "M_J"},
+            {"name": "M_Ks"},
+            {"name": "Mbol"},
+            {"name": "i-z"},
+            {"name": "z-Y"},
+            {"name": "W1-W2"},
+        ]
+    });
+    make_searchable(table, "Spec Type");
+
+    // detect row clicks, highlight and display plots etc
+    $('#stellar_params tbody').on( 'click', '.clickable-row', function () {
+        if ( $(this).hasClass('active') ) {
+            $(this).removeClass('active');
+        }
+        else {
+            $(this).addClass('active').siblings().removeClass('active');
+        }
+    } );
+});
+</script>
+{% endblock %}

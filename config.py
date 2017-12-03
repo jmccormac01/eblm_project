@@ -1,0 +1,4 @@
+WTF_CSRF_ENABLED = True
+SECRET_KEY = 'development'
+SEND_FILE_MAX_AGE_DEFAULT = -1
+
