@@ -2,3 +2,4 @@
 __pycache__
 eblm/__pycache__
 eblm/static/pngs
+*.swp
