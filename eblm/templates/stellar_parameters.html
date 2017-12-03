@@ -122,7 +122,7 @@ $(document).ready(function(){
     });
     make_searchable(table, "Spec Type");
 
-    // detect row clicks, highlight and display plots etc
+    // detect row clicks and highlight
     $('#stellar_params tbody').on( 'click', '.clickable-row', function () {
         if ( $(this).hasClass('active') ) {
             $(this).removeClass('active');

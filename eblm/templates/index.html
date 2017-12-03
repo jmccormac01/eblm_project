@@ -99,12 +99,12 @@ $(document).ready(function(){
         else {
             $(this).addClass('active').siblings().removeClass('active');
         }
+        // do the plotting here
         var swasp_id = $(this).find("td:nth-child(1)").text();
         var date = new Date().getTime();
         var url = "{{ url_for('static', filename='pngs') }}" + "/" + swasp_id + ".png?q=" + date;
         $("#eblm_plot").css('background-image', "url(\'" + url + "\')" );
-
-        // do the plotting here
+        // log some stuff for sanity checking
         console.log(swasp_id);
         console.log(date);
         console.log(url);
